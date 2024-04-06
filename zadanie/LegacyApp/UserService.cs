@@ -1,33 +1,36 @@
 ﻿using System;
+using LegacyApp.Interface;
 
 namespace LegacyApp
 {
     public class UserService
     {
+        private IClientRepository _clientRepository;
+        private ICreditService _creditService;
+        public UserService()
+        {
+            this._clientRepository = new ClientRepository();
+            this._creditService = new UserCreditService();
+        }
 
         public bool AddUser(string firstName, string lastName, string email, DateTime dateOfBirth, int clientId)
         {
-            if (string.IsNullOrEmpty(firstName) || string.IsNullOrEmpty(lastName))
+            if (Walidator.CheckIsNullOrEmpty(firstName) || Walidator.CheckIsNullOrEmpty(lastName))
             {
                 return false;
             }
 
-            if (!email.Contains("@") && !email.Contains("."))
+            if (Walidator.CheckEmail(email))
             {
                 return false;
             }
 
-            var now = DateTime.Now;
-            int age = now.Year - dateOfBirth.Year;
-            if (now.Month < dateOfBirth.Month || (now.Month == dateOfBirth.Month && now.Day < dateOfBirth.Day)) age--;
-
-            if (age < 21)
+            if (Walidator.CheckAge(dateOfBirth))
             {
                 return false;
             }
 
-            var clientRepository = new ClientRepository();
-            var client = clientRepository.GetById(clientId);
+            var client = _clientRepository.GetById(clientId);
 
             var user = new User
             {
@@ -44,24 +47,18 @@ namespace LegacyApp
             }
             else if (client.Type == "ImportantClient")
             {
-                using (var userCreditService = new UserCreditService())
-                {
-                    int creditLimit = userCreditService.GetCreditLimit(user.LastName, user.DateOfBirth);
-                    creditLimit = creditLimit * 2;
-                    user.CreditLimit = creditLimit;
-                }
+            
+                int creditLimit = _creditService.GetCreditLimit(user.LastName, user.DateOfBirth);
+                creditLimit = creditLimit * 2; user.CreditLimit = creditLimit;
             }
             else
             {
                 user.HasCreditLimit = true;
-                using (var userCreditService = new UserCreditService())
-                {
-                    int creditLimit = userCreditService.GetCreditLimit(user.LastName, user.DateOfBirth);
-                    user.CreditLimit = creditLimit;
-                }
+                int creditLimit = _creditService.GetCreditLimit(user.LastName, user.DateOfBirth);
+                user.CreditLimit = creditLimit;
             }
 
-            if (user.HasCreditLimit && user.CreditLimit < 500)
+            if ( Walidator.CheckCreditLimit(user.HasCreditLimit,user.CreditLimit))
             {
                 return false;
             }
