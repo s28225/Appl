@@ -11,7 +11,7 @@ public static class Walidator
     }
     public static bool CheckEmail(string data)
     {
-        return data.Contains("@") && data.Contains(".");
+        return !data.Contains("@") && !data.Contains(".");
     }
 
     public static bool CheckAge(DateTime dateOfBirth)

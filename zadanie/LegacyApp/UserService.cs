@@ -58,7 +58,7 @@ namespace LegacyApp
                 user.CreditLimit = creditLimit;
             }
 
-            if ( Walidator.CheckCreditLimit(user.HasCreditLimit,user.CreditLimit))
+            if (Walidator.CheckCreditLimit(user.HasCreditLimit,user.CreditLimit))
             {
                 return false;
             }
