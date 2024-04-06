@@ -45,16 +45,18 @@ namespace LegacyApp
             {
                 user.HasCreditLimit = false;
             }
-            else if (client.Type == "ImportantClient")
-            {
-            
-                int creditLimit = _creditService.GetCreditLimit(user.LastName, user.DateOfBirth);
-                creditLimit = creditLimit * 2; user.CreditLimit = creditLimit;
-            }
             else
             {
-                user.HasCreditLimit = true;
                 int creditLimit = _creditService.GetCreditLimit(user.LastName, user.DateOfBirth);
+                if (client.Type == "ImportantClient")
+                {
+                    creditLimit = creditLimit * 2;
+                }
+                else
+                {
+                    user.HasCreditLimit = true;
+                }
+
                 user.CreditLimit = creditLimit;
             }
 
