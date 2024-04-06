@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.InteropServices;
 using LegacyApp.Interface;
 
 namespace LegacyApp
@@ -59,7 +60,6 @@ namespace LegacyApp
 
                 user.CreditLimit = creditLimit;
             }
-
             if (Walidator.CheckCreditLimit(user.HasCreditLimit,user.CreditLimit))
             {
                 return false;

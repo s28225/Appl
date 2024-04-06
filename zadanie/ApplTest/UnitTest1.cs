@@ -1,4 +1,5 @@
 using LegacyApp;
+using LegacyApp.Interface;
 
 namespace ApplTest;
 
@@ -55,5 +56,20 @@ public class UnitTest1
         var userService = new UserService();
         var result = userService.AddUser("John", "Doe", "johndoe@gmail.com", DateTime.Parse("2005-03-21"), 1);
         Assert.False(result, "Client must be older than 21");
+    }
+
+    [Fact]
+    public void CheckCreditLimitNormalClient()
+    {
+        var userService = new UserService();
+        var result = userService.AddUser("John", "Kowalski", "johndoe@gmail.com", DateTime.Parse("1982-03-21"), 1);
+        Assert.False(result, "Client has credit limit of 500");
+    }
+    [Fact]
+    public void CheckCreditLimitVeryImportantAndImportantClient()
+    {
+        var userService = new UserService();
+        var result = userService.AddUser("John", "Kowalski", "johndoe@gmail.com", DateTime.Parse("1982-03-21"), 3);
+        Assert.True(result, "Client has credit limit of 500");
     }
 }
